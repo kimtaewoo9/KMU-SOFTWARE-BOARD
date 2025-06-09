@@ -58,6 +58,27 @@ class ArticleApiTest {
 			.toBodilessEntity();
 	}
 
+	@Test
+	void readAllTest() {
+		ArticlePageResponse articlePageResponse = restClient.get()
+			.uri("/v1/articles?boardId=1&page=1&pageSize=10")
+			.retrieve()
+			.body(ArticlePageResponse.class);
+
+		System.out.println(
+			"articlePageResponse.getArticleCount(): " + articlePageResponse.getArticleCount());
+		for (ArticleResponse article : articlePageResponse.getArticles()) {
+			System.out.println("articleId: " + article.getArticleId());
+		}
+	}
+
+	@Data
+	static class ArticlePageResponse {
+
+		private List<ArticleResponse> articles;
+		private Long articleCount;
+	}
+
 	@Data
 	@AllArgsConstructor
 	static class ArticleUpdateRequest {

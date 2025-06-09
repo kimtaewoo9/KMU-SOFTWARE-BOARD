@@ -1,4 +1,5 @@
 rootProject.name = 'my-board'
 
 include 'common'
+include 'common:snowflake'
 include 'service'

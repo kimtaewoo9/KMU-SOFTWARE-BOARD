@@ -15,6 +15,7 @@ import software.board.article.repository.ArticleFileRepository;
 import software.board.article.repository.ArticleRepository;
 import software.board.article.service.request.ArticleCreateRequest;
 import software.board.article.service.request.ArticleUpdateRequest;
+import software.board.article.service.response.ArticlePageResponse;
 import software.board.article.service.response.ArticleResponse;
 
 @Service
@@ -117,5 +118,28 @@ public class ArticleService {
 			articleFileRepository.deleteAllInBatch(articleFiles);
 		}
 		articleRepository.delete(article);
+	}
+
+	@Transactional(readOnly = true)
+	public ArticleResponse read(Long articleId) {
+		Article article = articleRepository.findById(articleId).orElseThrow(
+			() -> new EntityNotFoundException("[ArticleService.read] article not found")
+		);
+		return ArticleResponse.from(article);
+	}
+
+	@Transactional(readOnly = true)
+	public ArticlePageResponse readAll(Long boardId, Long page, Long pageSize) {
+		List<ArticleResponse> articles = articleRepository.findAll(boardId, (page - 1) * pageSize,
+				pageSize).stream()
+			.map(ArticleResponse::from)
+			.toList();
+
+		Long count = articleRepository.count(
+			boardId,
+			PageLimitCalculator.calculatePageLimit(page, pageSize, 10L)
+		);
+
+		return ArticlePageResponse.of(articles, count);
 	}
 }

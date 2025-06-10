@@ -28,4 +28,20 @@ class ArticleRepositoryTest {
 		Long count = articleRepository.count(1L, 10000L);
 		log.info("count = {}", count);
 	}
+
+	@Test
+	void findInfiniteScrollTest() {
+		List<Article> firstPageArticles = articleRepository.findAllInfiniteScroll(1L, 30L);
+		for (Article article : firstPageArticles) {
+			log.info("articleId = {}", article.getArticleId());
+		}
+
+		Long lastArticleId = firstPageArticles.getLast().getArticleId();
+		List<Article> nextPageArticles =
+			articleRepository.findAllInfiniteScroll(1L, 30L, lastArticleId);
+		log.info("[Next Page]");
+		for (Article article : nextPageArticles) {
+			log.info("articleId = {}", article.getArticleId());
+		}
+	}
 }

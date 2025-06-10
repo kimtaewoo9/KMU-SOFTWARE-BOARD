@@ -4,6 +4,7 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.junit.jupiter.api.Test;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -69,6 +70,33 @@ class ArticleApiTest {
 			"articlePageResponse.getArticleCount(): " + articlePageResponse.getArticleCount());
 		for (ArticleResponse article : articlePageResponse.getArticles()) {
 			System.out.println("articleId: " + article.getArticleId());
+		}
+	}
+
+	@Test
+	void readAllInfiniteScroll() {
+		List<ArticleResponse> firstPage = restClient.get()
+			.uri("/v1/articles/infinite-scroll?boardId=1&pageSize=10")
+			.retrieve()
+			.body(new ParameterizedTypeReference<List<ArticleResponse>>() {
+			});
+
+		System.out.println("[FIRST PAGE]");
+		for (ArticleResponse articleResponse : firstPage) {
+			System.out.println("articleId=" + articleResponse.getArticleId());
+		}
+
+		String lastArticleId = firstPage.getLast().getArticleId();
+		List<ArticleResponse> nextPage = restClient.get()
+			.uri("/v1/articles/infinite-scroll?boardId=1&pageSize=10&lastArticleId=%s".formatted(
+				lastArticleId))
+			.retrieve()
+			.body(new ParameterizedTypeReference<List<ArticleResponse>>() {
+			});
+
+		System.out.println("[NEXT PAGE}");
+		for (ArticleResponse articleResponse : nextPage) {
+			System.out.println("articleId=" + articleResponse.getArticleId());
 		}
 	}
 

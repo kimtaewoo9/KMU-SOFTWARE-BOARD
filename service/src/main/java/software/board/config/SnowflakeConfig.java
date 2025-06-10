@@ -1,4 +1,4 @@
-package software.board.common;
+package software.board.config;
 
 import kuke.board.common.snowflake.Snowflake;
 import org.springframework.context.annotation.Bean;

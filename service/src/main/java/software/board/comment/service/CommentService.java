@@ -3,6 +3,7 @@ package software.board.comment.service;
 import static java.util.function.Predicate.not;
 
 import jakarta.persistence.EntityNotFoundException;
+import java.util.List;
 import kuke.board.common.snowflake.Snowflake;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -11,6 +12,7 @@ import software.board.comment.entity.Comment;
 import software.board.comment.repository.CommentRepository;
 import software.board.comment.service.request.CommentCreateRequest;
 import software.board.comment.service.request.CommentUpdateRequest;
+import software.board.comment.service.response.CommentPageResponse;
 import software.board.comment.service.response.CommentResponse;
 
 @Service
@@ -93,5 +95,28 @@ public class CommentService {
 
 	private boolean hasChild(Comment comment) {
 		return commentRepository.countBy(comment.getArticleId(), comment.getCommentId(), 2L) == 2;
+	}
+
+	@Transactional(readOnly = true)
+	public CommentPageResponse readAll(Long articleId, Long page, Long pageSize) {
+		List<CommentResponse> comments = commentRepository.findAll(articleId, (page - 1) * pageSize,
+				pageSize).stream()
+			.map(CommentResponse::from)
+			.toList();
+
+		Long commentCount = commentRepository
+			.count(articleId, PageLimitCalculator.calculatePageLimit(page, pageSize, 10L));
+
+		return CommentPageResponse.of(comments, commentCount);
+	}
+
+	@Transactional(readOnly = true)
+	public List<CommentResponse> readAllInfiniteScroll(Long articleId, Long lastParentCommentId,
+		Long lastCommentId, Long pageSize) {
+		List<Comment> comments = lastParentCommentId == null || lastCommentId == null ?
+			commentRepository.findAllInfiniteScroll(articleId, pageSize) :
+			commentRepository.findAllInfiniteScroll(articleId, lastParentCommentId, lastCommentId,
+				pageSize);
+		return comments.stream().map(CommentResponse::from).toList();
 	}
 }

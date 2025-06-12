@@ -139,6 +139,36 @@ public class CommentApiTest {
 		}
 	}
 
+	@Test
+	void countTest() {
+		CommentCreateRequest request = new CommentCreateRequest(1L, "content", null, 1L);
+
+		CommentResponse response = restClient.post()
+			.uri("/v1/comments")
+			.body(request)
+			.retrieve()
+			.body(CommentResponse.class);
+
+		Long count = restClient.get()
+			.uri("/v1/comments/articles/{articleId}/count", response.getArticleId())
+			.retrieve()
+			.body(Long.class);
+
+		System.out.println("count: " + count);
+
+		restClient.delete()
+			.uri("/v1/comments/{commentId}", response.getCommentId())
+			.retrieve()
+			.body(Void.class);
+
+		Long count2 = restClient.get()
+			.uri("/v1/comments/articles/{articleId}/count", response.getArticleId())
+			.retrieve()
+			.body(Long.class);
+
+		System.out.println("count2: " + count2);
+	}
+
 	@Getter
 	static class CommentPageResponse {
 

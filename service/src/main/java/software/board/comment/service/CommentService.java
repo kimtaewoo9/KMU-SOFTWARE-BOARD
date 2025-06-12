@@ -8,7 +8,9 @@ import kuke.board.common.snowflake.Snowflake;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import software.board.comment.entity.ArticleCommentCount;
 import software.board.comment.entity.Comment;
+import software.board.comment.repository.ArticleCommentCountRepository;
 import software.board.comment.repository.CommentRepository;
 import software.board.comment.service.request.CommentCreateRequest;
 import software.board.comment.service.request.CommentUpdateRequest;
@@ -19,8 +21,10 @@ import software.board.comment.service.response.CommentResponse;
 @RequiredArgsConstructor
 public class CommentService {
 
-	private final CommentRepository commentRepository;
 	private final Snowflake snowflake;
+
+	private final CommentRepository commentRepository;
+	private final ArticleCommentCountRepository articleCommentCountRepository;
 
 	@Transactional
 	public CommentResponse create(CommentCreateRequest request) {
@@ -34,6 +38,13 @@ public class CommentService {
 		);
 
 		Comment savedComment = commentRepository.save(newComment);
+
+		int result = articleCommentCountRepository.increase(request.getArticleId());
+		if (result == 0) {
+			articleCommentCountRepository.save(
+				ArticleCommentCount.init(request.getArticleId(), 1L)
+			);
+		}
 
 		return CommentResponse.from(savedComment);
 	}
@@ -85,6 +96,9 @@ public class CommentService {
 
 	private void delete(Comment comment) {
 		commentRepository.delete(comment);
+		articleCommentCountRepository.decrease(comment.getArticleId());
+
+		// 삭제 후, 부모를 물리 삭제해아 하는지 확인 .. 논리 삭제 되어있고, 자식이 없으면 물리삭제
 		if (!comment.isRoot()) {
 			commentRepository.findById(comment.getParentCommentId())
 				.filter(Comment::getDeleted)
@@ -118,5 +132,12 @@ public class CommentService {
 			commentRepository.findAllInfiniteScroll(articleId, lastParentCommentId, lastCommentId,
 				pageSize);
 		return comments.stream().map(CommentResponse::from).toList();
+	}
+
+	@Transactional(readOnly = true)
+	public Long count(Long articleId) {
+		return articleCommentCountRepository.findById(articleId)
+			.map(ArticleCommentCount::getCommentCount)
+			.orElse(0L);
 	}
 }

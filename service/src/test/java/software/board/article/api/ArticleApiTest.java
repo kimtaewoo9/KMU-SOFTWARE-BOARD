@@ -100,6 +100,50 @@ class ArticleApiTest {
 		}
 	}
 
+	@Test
+	void countTest() {
+		Long count = restClient.get()
+			.uri("/v1/articles/boards/{boardId}/count", 1L)
+			.retrieve()
+			.body(Long.class);
+
+		System.out.println("count: " + count);
+	}
+
+	@Test
+	void countTest2() {
+		MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+
+		ArticleCreateRequest request = new ArticleCreateRequest("title", "content", 2L, 1L);
+		body.add("request", request);
+
+		ArticleResponse response = restClient.post()
+			.uri("/v1/articles")
+			.body(body)
+			.retrieve()
+			.body(ArticleResponse.class);
+
+		System.out.println("response: " + response);
+
+		Long count = restClient.get()
+			.uri("/v1/articles/boards/{boardId}/count", 2L)
+			.retrieve()
+			.body(Long.class);
+		System.out.println("count: " + count);
+
+		restClient.delete()
+			.uri("/v1/articles/{articleId}", response.getArticleId())
+			.retrieve()
+			.body(Void.class);
+
+		Long count2 = restClient.get()
+			.uri("/v1/articles/boards/{boardId}/count", 2L)
+			.retrieve()
+			.body(Long.class);
+
+		System.out.println("count2: " + count2);
+	}
+
 	@Data
 	static class ArticlePageResponse {
 

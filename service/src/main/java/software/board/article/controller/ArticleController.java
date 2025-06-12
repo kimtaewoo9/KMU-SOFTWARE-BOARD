@@ -39,6 +39,13 @@ public class ArticleController {
 		return articleService.readAll(boardId, page, pageSize);
 	}
 
+	@GetMapping("/v1/articles/boards/{boardId}/count")
+	public Long count(
+		@PathVariable("boardId") Long boardId
+	) {
+		return articleService.count(boardId);
+	}
+
 	@GetMapping("/v1/articles/infinite-scroll")
 	public List<ArticleResponse> readAllInfiniteScroll(
 		@RequestParam("boardId") Long boardId,

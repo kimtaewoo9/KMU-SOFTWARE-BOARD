@@ -3,7 +3,6 @@ package software.board.article.service;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
-import kuke.board.common.snowflake.Snowflake;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -19,6 +18,7 @@ import software.board.article.service.request.ArticleCreateRequest;
 import software.board.article.service.request.ArticleUpdateRequest;
 import software.board.article.service.response.ArticlePageResponse;
 import software.board.article.service.response.ArticleResponse;
+import software.board.common.snowflake.Snowflake;
 
 @Service
 @RequiredArgsConstructor

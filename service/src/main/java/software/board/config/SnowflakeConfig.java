@@ -1,8 +1,8 @@
 package software.board.config;
 
-import kuke.board.common.snowflake.Snowflake;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import software.board.common.snowflake.Snowflake;
 
 @Configuration
 public class SnowflakeConfig {

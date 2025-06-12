@@ -4,7 +4,6 @@ import static java.util.function.Predicate.not;
 
 import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
-import kuke.board.common.snowflake.Snowflake;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +15,7 @@ import software.board.comment.service.request.CommentCreateRequest;
 import software.board.comment.service.request.CommentUpdateRequest;
 import software.board.comment.service.response.CommentPageResponse;
 import software.board.comment.service.response.CommentResponse;
+import software.board.common.snowflake.Snowflake;
 
 @Service
 @RequiredArgsConstructor

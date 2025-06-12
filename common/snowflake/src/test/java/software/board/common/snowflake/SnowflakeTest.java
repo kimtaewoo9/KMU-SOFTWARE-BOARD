@@ -1,6 +1,6 @@
-package kuke.board.common.snowflake;
+package software.board.common.snowflake;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,10 +9,10 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-
 import org.junit.jupiter.api.Test;
 
 class SnowflakeTest {
+
 	Snowflake snowflake = new Snowflake();
 
 	@Test

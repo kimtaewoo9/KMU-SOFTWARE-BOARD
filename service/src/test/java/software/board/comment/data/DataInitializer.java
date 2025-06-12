@@ -5,12 +5,12 @@ import jakarta.persistence.PersistenceContext;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import kuke.board.common.snowflake.Snowflake;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.support.TransactionTemplate;
 import software.board.comment.entity.Comment;
+import software.board.common.snowflake.Snowflake;
 
 @SpringBootTest
 public class DataInitializer {

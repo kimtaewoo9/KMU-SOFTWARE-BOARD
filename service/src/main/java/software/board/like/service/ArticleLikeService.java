@@ -1,10 +1,10 @@
 package software.board.like.service;
 
 import jakarta.persistence.EntityNotFoundException;
-import kuke.board.common.snowflake.Snowflake;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import software.board.common.snowflake.Snowflake;
 import software.board.like.entity.ArticleLike;
 import software.board.like.entity.ArticleLikeCount;
 import software.board.like.repository.ArticleLikeCountRepository;

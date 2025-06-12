@@ -2,4 +2,6 @@ rootProject.name = 'my-board'
 
 include 'common'
 include 'common:snowflake'
+include 'common:data-serializer'
+include 'common:event'
 include 'service'

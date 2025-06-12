@@ -11,8 +11,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import software.board.article.entity.Article;
 import software.board.article.entity.ArticleFile;
+import software.board.article.entity.BoardArticleCount;
 import software.board.article.repository.ArticleFileRepository;
 import software.board.article.repository.ArticleRepository;
+import software.board.article.repository.BoardArticleCountRepository;
 import software.board.article.service.request.ArticleCreateRequest;
 import software.board.article.service.request.ArticleUpdateRequest;
 import software.board.article.service.response.ArticlePageResponse;
@@ -25,6 +27,7 @@ public class ArticleService {
 
 	private final Snowflake snowflake;
 	private final ArticleRepository articleRepository;
+	private final BoardArticleCountRepository boardArticleCountRepository;
 
 	private final ArticleFileRepository articleFileRepository;
 	private final FileStorageService fileStorageService;
@@ -57,6 +60,14 @@ public class ArticleService {
 				fileUrls.add(savedArticleFile.getFileUrl());
 			}
 		}
+
+		int result = boardArticleCountRepository.increase(request.getBoardId());
+		if (result == 0) {
+			boardArticleCountRepository.save(
+				BoardArticleCount.init(request.getBoardId(), 1L)
+			);
+		}
+
 		return ArticleResponse.from(savedArticle, fileUrls);
 	}
 
@@ -118,6 +129,8 @@ public class ArticleService {
 			articleFileRepository.deleteAllInBatch(articleFiles);
 		}
 		articleRepository.delete(article);
+
+		boardArticleCountRepository.decrease(article.getBoardId());
 	}
 
 	@Transactional(readOnly = true)
@@ -150,5 +163,12 @@ public class ArticleService {
 			articleRepository.findAllInfiniteScroll(boardId, pageSize) :
 			articleRepository.findAllInfiniteScroll(boardId, pageSize, lastArticleId);
 		return articles.stream().map(ArticleResponse::from).toList();
+	}
+
+	@Transactional(readOnly = true)
+	public Long count(Long boardId) {
+		return boardArticleCountRepository.findById(boardId)
+			.map(BoardArticleCount::getArticleCount)
+			.orElse(0L);
 	}
 }

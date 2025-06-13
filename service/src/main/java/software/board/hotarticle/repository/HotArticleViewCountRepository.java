@@ -7,15 +7,15 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @RequiredArgsConstructor
-public class ArticleCommentCountRepository {
+public class HotArticleViewCountRepository {
 
 	private final StringRedisTemplate redisTemplate;
 
-	// hot-article::article::{articleId}::comment-count
-	private static final String KEY_FORMAT = "hot-article::article::%s::comment-count";
+	// hot-article::article::{articleId}::view-count
+	private static final String KEY_FORMAT = "hot-article::article::%s::like-count";
 
-	public void createOrUpdate(Long articleId, Long commentCount, Duration ttl) {
-		redisTemplate.opsForValue().set(generateKey(articleId), String.valueOf(commentCount));
+	public void createOrUpdate(Long articleId, Long viewCount, Duration ttl) {
+		redisTemplate.opsForValue().set(generateKey(articleId), String.valueOf(viewCount), ttl);
 	}
 
 	public Long read(Long articleId) {

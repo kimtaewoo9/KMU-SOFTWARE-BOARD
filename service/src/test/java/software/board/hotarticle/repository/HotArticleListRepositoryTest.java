@@ -1,4 +1,4 @@
-package software.board.hotarticle;
+package software.board.hotarticle.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

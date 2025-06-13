@@ -1,4 +1,4 @@
-package software.board.hotarticle;
+package software.board.hotarticle.repository;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -36,7 +36,8 @@ public class HotArticleListRepository {
 		});
 	}
 
-	public void remove(Long articleId, LocalDateTime dateStr) {
+	public void remove(LocalDateTime dateStr, Long articleId) {
+		// key -> 날짜, value -> articleId
 		redisTemplate.opsForZSet().remove(generateKey(dateStr), String.valueOf(articleId));
 	}
 

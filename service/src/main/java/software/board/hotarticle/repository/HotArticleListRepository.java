@@ -30,7 +30,7 @@ public class HotArticleListRepository {
 			StringRedisConnection connection = (StringRedisConnection) action;
 			String key = generateKey(time);
 			connection.zAdd(key, score, String.valueOf(articleId)); // key, 정렬 기준, 값
-			connection.zRemRange(key, 0, -limit - 1);
+			connection.zRemRange(key, 0, -limit - 1); // add 에서 몇개 유지할지 정함 .
 			connection.expire(key, ttl.toSeconds());
 			return null;
 		});

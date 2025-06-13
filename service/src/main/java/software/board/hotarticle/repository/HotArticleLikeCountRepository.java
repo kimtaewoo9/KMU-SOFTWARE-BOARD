@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @RequiredArgsConstructor
-public class ArticleLikeCountRepository {
+public class HotArticleLikeCountRepository {
 
 	private final StringRedisTemplate redisTemplate;
 

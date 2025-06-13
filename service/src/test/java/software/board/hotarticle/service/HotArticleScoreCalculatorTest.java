@@ -9,9 +9,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import software.board.hotarticle.repository.ArticleCommentCountRepository;
-import software.board.hotarticle.repository.ArticleLikeCountRepository;
-import software.board.hotarticle.repository.ArticleViewCountRepository;
+import software.board.hotarticle.repository.HotArticleCommentCountRepository;
+import software.board.hotarticle.repository.HotArticleLikeCountRepository;
+import software.board.hotarticle.repository.HotArticleViewCountRepository;
 
 @ExtendWith(MockitoExtension.class)
 class HotArticleScoreCalculatorTest {
@@ -20,13 +20,13 @@ class HotArticleScoreCalculatorTest {
 	HotArticleScoreCalculator hotArticleScoreCalculator;
 
 	@Mock
-	ArticleCommentCountRepository articleCommentCountRepository;
+	HotArticleCommentCountRepository hotArticleCommentCountRepository;
 
 	@Mock
-	ArticleLikeCountRepository articleLikeCountRepository;
+	HotArticleLikeCountRepository hotArticleLikeCountRepository;
 
 	@Mock
-	ArticleViewCountRepository articleViewCountRepository;
+	HotArticleViewCountRepository hotArticleViewCountRepository;
 
 	@Test
 	void calculateTest() {
@@ -35,9 +35,9 @@ class HotArticleScoreCalculatorTest {
 		Long likeCount = RandomGenerator.getDefault().nextLong(100);
 		Long viewCount = RandomGenerator.getDefault().nextLong(100);
 
-		given(articleCommentCountRepository.read(articleId)).willReturn(commentCount);
-		given(articleLikeCountRepository.read(articleId)).willReturn(likeCount);
-		given(articleViewCountRepository.read(articleId)).willReturn(viewCount);
+		given(hotArticleCommentCountRepository.read(articleId)).willReturn(commentCount);
+		given(hotArticleLikeCountRepository.read(articleId)).willReturn(likeCount);
+		given(hotArticleViewCountRepository.read(articleId)).willReturn(viewCount);
 
 		long score = hotArticleScoreCalculator.calculate(articleId);
 

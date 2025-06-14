@@ -1,6 +1,8 @@
 package software.board.article.repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -63,4 +65,7 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
 		@Param("limit") Long limit,
 		@Param("lastArticleId") Long lastArticleId
 	);
+
+
+	Optional<LocalDateTime> findCreatedAtByArticleId(Long articleId);
 }

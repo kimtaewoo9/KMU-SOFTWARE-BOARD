@@ -9,13 +9,14 @@ import static org.mockito.Mockito.verify;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import software.board.article.repository.ArticleRepository;
 import software.board.event.Event;
-import software.board.hotarticle.repository.ArticleCreatedTimeRepository;
 import software.board.hotarticle.repository.HotArticleListRepository;
 import software.board.hotarticle.service.eventhandler.EventHandler;
 
@@ -29,7 +30,7 @@ class HotArticleScoreUpdaterTest {
 	@Mock
 	HotArticleScoreCalculator hotArticleScoreCalculator;
 	@Mock
-	ArticleCreatedTimeRepository articleCreatedTimeRepository;
+	ArticleRepository articleRepository;
 
 	@Test
 	void updateIfArticleNotCreatedTodayTest() {
@@ -41,7 +42,8 @@ class HotArticleScoreUpdaterTest {
 		given(eventHandler.findArticleId(event)).willReturn(articleId);
 
 		LocalDateTime createdTime = LocalDateTime.now().minusDays(1);
-		given(articleCreatedTimeRepository.read(articleId)).willReturn(createdTime);
+		given(articleRepository.findCreatedAtByArticleId(articleId))
+			.willReturn(Optional.of(createdTime));
 
 		// when
 		hotArticleScoreUpdater.update(event, eventHandler);
@@ -64,7 +66,8 @@ class HotArticleScoreUpdaterTest {
 		given(eventHandler.findArticleId(event)).willReturn(articleId);
 
 		LocalDateTime createdTime = LocalDateTime.now();
-		given(articleCreatedTimeRepository.read(articleId)).willReturn(createdTime);
+		given(articleRepository.findCreatedAtByArticleId(articleId))
+			.willReturn(Optional.of(createdTime));
 
 		// when
 		hotArticleScoreUpdater.update(event, eventHandler);

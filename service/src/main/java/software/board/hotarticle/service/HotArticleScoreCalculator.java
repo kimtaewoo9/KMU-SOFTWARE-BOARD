@@ -1,31 +1,26 @@
 package software.board.hotarticle.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import software.board.hotarticle.repository.HotArticleCommentCountRepository;
-import software.board.hotarticle.repository.HotArticleLikeCountRepository;
-import software.board.hotarticle.repository.HotArticleViewCountRepository;
+import software.board.like.entity.ArticleLikeCount;
+import software.board.like.repository.ArticleLikeCountRepository;
 
 @Component
 @RequiredArgsConstructor
 public class HotArticleScoreCalculator {
 
 	// TODO 좋아요가 10 개 이상이면 hot article 인걸로 변경 .
-	private final HotArticleLikeCountRepository hotArticleLikeCountRepository;
-	private final HotArticleViewCountRepository hotArticleViewCountRepository;
-	private final HotArticleCommentCountRepository hotArticleCommentCountRepository;
+	private final ArticleLikeCountRepository articleLikeCountRepository;
 
 	private static final long ARTICLE_LIKE_COUNT_WEIGHT = 10;
-	private static final long ARTICLE_VIEW_COUNT_WEIGHT = 1;
-	private static final long ARTICLE_COMMENT_COUNT_WEIGHT = 1;
 
 	public long calculate(Long articleId) {
-		Long articleLikeCount = hotArticleLikeCountRepository.read(articleId);
-		Long articleViewCount = hotArticleViewCountRepository.read(articleId);
-		Long articleCommentCount = hotArticleCommentCountRepository.read(articleId);
 
-		return articleLikeCount * ARTICLE_LIKE_COUNT_WEIGHT +
-			articleViewCount * ARTICLE_VIEW_COUNT_WEIGHT +
-			articleCommentCount * ARTICLE_COMMENT_COUNT_WEIGHT;
+		ArticleLikeCount likeCount = articleLikeCountRepository.findLockedByArticleId(articleId)
+			.orElseThrow(() -> new EntityNotFoundException(
+				"[HotArticleScoreCalculator.ArticleLikeCountRepository] article like not found."));
+
+		return likeCount.getLikeCount();
 	}
 }

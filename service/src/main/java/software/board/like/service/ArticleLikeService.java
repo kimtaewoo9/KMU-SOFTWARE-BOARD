@@ -4,7 +4,10 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import software.board.common.outboxmessagerelay.OutboxEventPublisher;
 import software.board.common.snowflake.Snowflake;
+import software.board.event.EventType;
+import software.board.event.payload.ArticleLikedEventPayload;
 import software.board.like.entity.ArticleLike;
 import software.board.like.entity.ArticleLikeCount;
 import software.board.like.repository.ArticleLikeCountRepository;
@@ -18,6 +21,8 @@ public class ArticleLikeService {
 	private final Snowflake snowflake;
 	private final ArticleLikeRepository articleLikeRepository;
 	private final ArticleLikeCountRepository articleLikeCountRepository;
+
+	private final OutboxEventPublisher outboxEventPublisher;
 
 	@Transactional(readOnly = true)
 	public ArticleLikeResponse read(Long articleId, Long userId) {
@@ -62,6 +67,18 @@ public class ArticleLikeService {
 				ArticleLikeCount.init(articleId, 1L)
 			);
 		}
+
+		outboxEventPublisher.publish(
+			EventType.ARTICLE_LIKED,
+			ArticleLikedEventPayload.builder()
+				.articleLikeId(articleLike.getArticleLikeId())
+				.articleId(articleLike.getArticleId())
+				.userId(articleLike.getUserId())
+				.createdAt(articleLike.getCreatedAt())
+				.articleLikeCount(count(articleLike.getArticleId()))
+				.build(),
+			articleLike.getArticleId()
+		);
 	}
 
 	@Transactional
@@ -70,6 +87,17 @@ public class ArticleLikeService {
 			.ifPresent(articleLike -> {
 				articleLikeRepository.delete(articleLike);
 				articleLikeCountRepository.decrease(articleId);
+				outboxEventPublisher.publish(
+					EventType.ARTICLE_UNLIKED,
+					ArticleLikedEventPayload.builder()
+						.articleLikeId(articleLike.getArticleLikeId())
+						.articleId(articleLike.getArticleId())
+						.userId(articleLike.getUserId())
+						.createdAt(articleLike.getCreatedAt())
+						.articleLikeCount(count(articleLike.getArticleId()))
+						.build(),
+					articleLike.getArticleId()
+				);
 			});
 	}
 

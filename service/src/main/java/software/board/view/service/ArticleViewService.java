@@ -10,7 +10,7 @@ public class ArticleViewService {
 
 	private final ArticleViewCountRepository articleViewCountRepository;
 	private final ArticleViewCountBackUpProcessor articleViewCountBackUpProcessor;
-
+	
 	private static final int BACKUP_BATCH_SIZE = 100;
 
 	public Long increase(Long articleId) {

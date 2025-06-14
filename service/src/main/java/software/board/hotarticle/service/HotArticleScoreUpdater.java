@@ -1,13 +1,14 @@
 package software.board.hotarticle.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import software.board.article.repository.ArticleRepository;
 import software.board.event.Event;
 import software.board.event.EventPayload;
-import software.board.hotarticle.repository.ArticleCreatedTimeRepository;
 import software.board.hotarticle.repository.HotArticleListRepository;
 import software.board.hotarticle.service.eventhandler.EventHandler;
 
@@ -17,14 +18,18 @@ public class HotArticleScoreUpdater {
 
 	private final HotArticleListRepository hotArticleListRepository;
 	private final HotArticleScoreCalculator hotArticleScoreCalculator;
-	private final ArticleCreatedTimeRepository articleCreatedTimeRepository;
+	private final ArticleRepository articleRepository;
 
 	private static final long HOT_ARTICLE_COUNT = 10;
 	private static final Duration HOT_ARTICLE_TTL = Duration.ofDays(10);
 
 	public void update(Event<EventPayload> event, EventHandler<EventPayload> eventHandler) {
 		Long articleId = eventHandler.findArticleId(event);
-		LocalDateTime createdTime = articleCreatedTimeRepository.read(articleId);
+		LocalDateTime createdTime = articleRepository.findCreatedAtByArticleId(articleId)
+			.orElseThrow(
+				() -> new EntityNotFoundException(
+					"[HotArticleScoreUpdater.update] article not found.")
+			);
 
 		if (!isArticleCreatedToday(createdTime)) {
 			return;

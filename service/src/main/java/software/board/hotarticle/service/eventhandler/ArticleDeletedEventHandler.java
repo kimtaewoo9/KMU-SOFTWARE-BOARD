@@ -5,7 +5,6 @@ import org.springframework.stereotype.Component;
 import software.board.event.Event;
 import software.board.event.EventType;
 import software.board.event.payload.ArticleDeletedEventPayload;
-import software.board.hotarticle.repository.ArticleCreatedTimeRepository;
 import software.board.hotarticle.repository.HotArticleListRepository;
 
 @Component
@@ -13,13 +12,10 @@ import software.board.hotarticle.repository.HotArticleListRepository;
 public class ArticleDeletedEventHandler implements EventHandler<ArticleDeletedEventPayload> {
 
 	private final HotArticleListRepository hotArticleListRepository;
-	private final ArticleCreatedTimeRepository articleCreatedTimeRepository;
 
 	@Override
 	public void handle(Event<ArticleDeletedEventPayload> event) {
 		ArticleDeletedEventPayload payload = event.getPayload();
-		articleCreatedTimeRepository.delete(payload.getArticleId());
-		// key -> dateStr value -> articleId
 		hotArticleListRepository.remove(payload.getCreatedAt(), payload.getArticleId());
 	}
 

@@ -5,23 +5,13 @@ import org.springframework.stereotype.Component;
 import software.board.event.Event;
 import software.board.event.EventType;
 import software.board.event.payload.ArticleLikedEventPayload;
-import software.board.hotarticle.repository.HotArticleLikeCountRepository;
-import software.board.hotarticle.utils.TimeCalculatorUtils;
 
 @Component
 @RequiredArgsConstructor
 public class ArticleLikedEventHandler implements EventHandler<ArticleLikedEventPayload> {
 
-	private final HotArticleLikeCountRepository hotArticleLikeCountRepository;
-
 	@Override
 	public void handle(Event<ArticleLikedEventPayload> event) {
-		ArticleLikedEventPayload payload = event.getPayload();
-		hotArticleLikeCountRepository.createOfUpdate(
-			payload.getArticleId(),
-			payload.getArticleLikeCount(),
-			TimeCalculatorUtils.calculateDurationToMidnight()
-		);
 	}
 
 	@Override

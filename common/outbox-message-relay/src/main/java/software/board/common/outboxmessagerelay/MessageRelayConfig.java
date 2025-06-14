@@ -48,6 +48,7 @@ public class MessageRelayConfig {
 		return executor;
 	}
 
+	// 10초 마다 polling 수행
 	@Bean
 	public Executor messageRelayPublishPendingEventExecutor() {
 		return Executors.newSingleThreadScheduledExecutor();

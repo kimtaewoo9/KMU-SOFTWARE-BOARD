@@ -24,7 +24,6 @@ public class MessageRelay {
 
 	@TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT)
 	public void createOutbox(OutboxEvent outboxEvent) {
-		log.info("[MessageRelay.createOutbox] outboxEvent={}", outboxEvent);
 		outboxRepository.save(outboxEvent.getOutbox());
 	}
 

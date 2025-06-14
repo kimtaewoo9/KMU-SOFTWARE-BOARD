@@ -15,7 +15,7 @@ public class ArticleViewCountBackUpProcessor {
 
 	private final ArticleViewCountBackUpRepository articleViewCountBackUpRepository;
 
-	private OutboxEventPublisher outboxEventPublisher;
+	private final OutboxEventPublisher outboxEventPublisher;
 
 	@Transactional
 	public void backUp(Long articleId, Long viewCount) {

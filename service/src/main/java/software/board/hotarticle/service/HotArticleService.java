@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import software.board.event.Event;
 import software.board.event.EventPayload;
 import software.board.event.EventType;
@@ -21,17 +22,23 @@ public class HotArticleService {
 	private final HotArticleScoreUpdater hotArticleScoreUpdater;
 	private final HotArticleListRepository hotArticleListRepository;
 
+	@Transactional
 	public void handleEvent(Event<EventPayload> event) {
 		EventHandler<EventPayload> eventHandler = findEventHandler(event);
 		if (eventHandler == null) {
 			return;
 		}
 
-		if (isArticleCreatedOrDeleted(event)) {
+		if (!isCommentCountCreatedOrDeleted(event)) {
 			eventHandler.handle(event);
 		} else {
 			hotArticleScoreUpdater.update(event, eventHandler);
 		}
+	}
+
+	private boolean isCommentCountCreatedOrDeleted(Event<EventPayload> event) {
+		return event.getType() == EventType.ARTICLE_LIKED ||
+			event.getType() == EventType.ARTICLE_UNLIKED;
 	}
 
 	private EventHandler<EventPayload> findEventHandler(Event<EventPayload> event) {
@@ -39,11 +46,6 @@ public class HotArticleService {
 			.filter(eventHandler -> eventHandler.support(event))
 			.findFirst()
 			.orElse(null);
-	}
-
-	private boolean isArticleCreatedOrDeleted(Event<EventPayload> event) {
-		return event.getType() == EventType.ARTICLE_CREATED
-			|| event.getType() == EventType.ARTICLE_DELETED;
 	}
 
 	// 1. articleId 로 article client 에서 article response 가져옴 2. hot article response 로 바꿈

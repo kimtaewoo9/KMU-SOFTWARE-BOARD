@@ -22,7 +22,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 @EnableScheduling // 스프링 스케줄링. 기능
 public class MessageRelayConfig {
 
-	@Value("${spring.kafka.bootstrap-server}")
+	@Value("${spring.kafka.bootstrap-servers}")
 	private String bootstrapServers;
 
 	// 카프카로 메시지를 보내기 위한 KafkaTemplate .. 다른 컴포넌트에서 이 빈을 주입 받아서 사용 .

@@ -18,7 +18,12 @@ import software.board.article.service.request.ArticleCreateRequest;
 import software.board.article.service.request.ArticleUpdateRequest;
 import software.board.article.service.response.ArticlePageResponse;
 import software.board.article.service.response.ArticleResponse;
+import software.board.common.outboxmessagerelay.OutboxEventPublisher;
 import software.board.common.snowflake.Snowflake;
+import software.board.event.EventType;
+import software.board.event.payload.ArticleCreatedEventPayload;
+import software.board.event.payload.ArticleDeletedEventPayload;
+import software.board.event.payload.ArticleUpdatedEventPayload;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +33,8 @@ public class ArticleService {
 	private final Snowflake snowflake;
 	private final ArticleRepository articleRepository;
 	private final BoardArticleCountRepository boardArticleCountRepository;
+	
+	private final OutboxEventPublisher outboxEventPublisher;
 
 	private final ArticleFileRepository articleFileRepository;
 	private final FileStorageService fileStorageService;
@@ -67,6 +74,20 @@ public class ArticleService {
 				BoardArticleCount.init(request.getBoardId(), 1L)
 			);
 		}
+
+		outboxEventPublisher.publish(
+			EventType.ARTICLE_CREATED,
+			ArticleCreatedEventPayload.builder()
+				.articleId(article.getArticleId())
+				.title(article.getTitle())
+				.content(article.getContent())
+				.boardId(article.getBoardId())
+				.writerId(article.getWriterId())
+				.createdAt(article.getCreatedAt())
+				.updatedAt(article.getUpdatedAt())
+				.build(),
+			article.getBoardId()
+		);
 
 		return ArticleResponse.from(savedArticle, fileUrls);
 	}
@@ -110,6 +131,20 @@ public class ArticleService {
 		List<ArticleFile> finalArticleFiles = articleFileRepository.findByArticleId(articleId);
 		List<String> fileUrls = finalArticleFiles.stream().map(ArticleFile::getFileUrl).toList();
 
+		outboxEventPublisher.publish(
+			EventType.ARTICLE_UPDATED,
+			ArticleUpdatedEventPayload.builder()
+				.articleId(article.getArticleId())
+				.title(article.getTitle())
+				.content(article.getContent())
+				.boardId(article.getBoardId())
+				.writerId(article.getWriterId())
+				.createdAt(article.getCreatedAt())
+				.updatedAt(article.getUpdatedAt())
+				.build(),
+			article.getBoardId()
+		);
+
 		return ArticleResponse.from(article, fileUrls);
 	}
 
@@ -129,8 +164,21 @@ public class ArticleService {
 			articleFileRepository.deleteAllInBatch(articleFiles);
 		}
 		articleRepository.delete(article);
-
 		boardArticleCountRepository.decrease(article.getBoardId());
+
+		outboxEventPublisher.publish(
+			EventType.ARTICLE_DELETED,
+			ArticleDeletedEventPayload.builder()
+				.articleId(article.getArticleId())
+				.title(article.getTitle())
+				.content(article.getContent())
+				.boardId(article.getBoardId())
+				.writerId(article.getWriterId())
+				.createdAt(article.getCreatedAt())
+				.updatedAt(article.getUpdatedAt())
+				.build(),
+			article.getBoardId()
+		);
 	}
 
 	@Transactional(readOnly = true)

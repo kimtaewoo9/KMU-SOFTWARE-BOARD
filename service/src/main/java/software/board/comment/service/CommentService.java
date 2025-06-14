@@ -15,7 +15,10 @@ import software.board.comment.service.request.CommentCreateRequest;
 import software.board.comment.service.request.CommentUpdateRequest;
 import software.board.comment.service.response.CommentPageResponse;
 import software.board.comment.service.response.CommentResponse;
+import software.board.common.outboxmessagerelay.OutboxEventPublisher;
 import software.board.common.snowflake.Snowflake;
+import software.board.event.EventType;
+import software.board.event.payload.CommentCreatedEventPayload;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +28,8 @@ public class CommentService {
 
 	private final CommentRepository commentRepository;
 	private final ArticleCommentCountRepository articleCommentCountRepository;
+
+	private final OutboxEventPublisher outboxEventPublisher;
 
 	@Transactional
 	public CommentResponse create(CommentCreateRequest request) {
@@ -45,6 +50,20 @@ public class CommentService {
 				ArticleCommentCount.init(request.getArticleId(), 1L)
 			);
 		}
+
+		outboxEventPublisher.publish(
+			EventType.COMMENT_CREATED,
+			CommentCreatedEventPayload.builder()
+				.commentId(savedComment.getCommentId())
+				.content(savedComment.getContent())
+				.articleId(savedComment.getArticleId())
+				.writerId(savedComment.getWriterId())
+				.deleted(savedComment.getDeleted())
+				.createdAt(savedComment.getCreatedAt())
+				.articleCommentCount(count(savedComment.getArticleId()))
+				.build(),
+			savedComment.getArticleId()
+		);
 
 		return CommentResponse.from(savedComment);
 	}
@@ -69,6 +88,20 @@ public class CommentService {
 		comment.update(request.getContent());
 		Comment savedComment = commentRepository.save(comment);
 
+		outboxEventPublisher.publish(
+			EventType.COMMENT_UPDATED,
+			CommentCreatedEventPayload.builder()
+				.commentId(savedComment.getCommentId())
+				.content(savedComment.getContent())
+				.articleId(savedComment.getArticleId())
+				.writerId(savedComment.getWriterId())
+				.deleted(savedComment.getDeleted())
+				.createdAt(savedComment.getCreatedAt())
+				.articleCommentCount(count(savedComment.getArticleId()))
+				.build(),
+			savedComment.getArticleId()
+		);
+
 		return CommentResponse.from(savedComment);
 	}
 
@@ -91,6 +124,19 @@ public class CommentService {
 				} else {
 					delete(comment);
 				}
+				outboxEventPublisher.publish(
+					EventType.COMMENT_DELETED,
+					CommentCreatedEventPayload.builder()
+						.commentId(comment.getCommentId())
+						.content(comment.getContent())
+						.articleId(comment.getArticleId())
+						.writerId(comment.getWriterId())
+						.deleted(comment.getDeleted())
+						.createdAt(comment.getCreatedAt())
+						.articleCommentCount(count(comment.getArticleId()))
+						.build(),
+					comment.getArticleId()
+				);
 			});
 	}
 
@@ -105,6 +151,8 @@ public class CommentService {
 				.filter(not(this::hasChild))
 				.ifPresent(this::delete);
 		}
+
+
 	}
 
 	private boolean hasChild(Comment comment) {

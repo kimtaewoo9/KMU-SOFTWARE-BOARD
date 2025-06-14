@@ -5,6 +5,7 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import software.board.article.repository.ArticleRepository;
 import software.board.event.Event;
@@ -14,6 +15,7 @@ import software.board.hotarticle.service.eventhandler.EventHandler;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class HotArticleScoreUpdater {
 
 	private final HotArticleListRepository hotArticleListRepository;
@@ -35,7 +37,6 @@ public class HotArticleScoreUpdater {
 			return;
 		}
 
-		// 오늘 날짜라면 .
 		eventHandler.handle(event);
 
 		long score = hotArticleScoreCalculator.calculate(articleId);

@@ -5,6 +5,7 @@ import static java.util.function.Predicate.not;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import software.board.comment.entity.ArticleCommentCount;
@@ -22,6 +23,7 @@ import software.board.event.payload.CommentCreatedEventPayload;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CommentService {
 
 	private final Snowflake snowflake;
@@ -50,7 +52,7 @@ public class CommentService {
 				ArticleCommentCount.init(request.getArticleId(), 1L)
 			);
 		}
-
+		
 		outboxEventPublisher.publish(
 			EventType.COMMENT_CREATED,
 			CommentCreatedEventPayload.builder()

@@ -66,6 +66,12 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
 		@Param("lastArticleId") Long lastArticleId
 	);
 
-
-	Optional<LocalDateTime> findCreatedAtByArticleId(Long articleId);
+	// TODO : hot article 을 하루만 기록 하지 않고, 계속 저장해두고 찾아볼 수 있게 변경
+	@Query(
+		value = "select article.created_at from article where article.article_id = :articleId",
+		nativeQuery = true
+	)
+	Optional<LocalDateTime> findCreatedAtByArticleId(
+		@Param("articleId") Long articleId
+	);
 }

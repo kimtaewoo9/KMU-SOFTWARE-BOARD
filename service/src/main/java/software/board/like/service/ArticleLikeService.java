@@ -2,6 +2,7 @@ package software.board.like.service;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import software.board.common.outboxmessagerelay.OutboxEventPublisher;
@@ -16,6 +17,7 @@ import software.board.like.service.response.ArticleLikeResponse;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ArticleLikeService {
 
 	private final Snowflake snowflake;
@@ -68,6 +70,7 @@ public class ArticleLikeService {
 			);
 		}
 
+		log.info("[ArticleLikeService.likePessimisticLock1] articleId={}", articleId);
 		outboxEventPublisher.publish(
 			EventType.ARTICLE_LIKED,
 			ArticleLikedEventPayload.builder()

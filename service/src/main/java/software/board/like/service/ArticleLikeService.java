@@ -69,8 +69,7 @@ public class ArticleLikeService {
 				ArticleLikeCount.init(articleId, 1L)
 			);
 		}
-
-		log.info("[ArticleLikeService.likePessimisticLock1] articleId={}", articleId);
+		
 		outboxEventPublisher.publish(
 			EventType.ARTICLE_LIKED,
 			ArticleLikedEventPayload.builder()

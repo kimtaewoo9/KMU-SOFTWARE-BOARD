@@ -1,4 +1,4 @@
-package software.board.hotarticle.config;
+package software.board.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

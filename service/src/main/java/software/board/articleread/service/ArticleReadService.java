@@ -9,12 +9,13 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.function.support.RouterFunctionMapping;
 import software.board.article.service.ArticleService;
 import software.board.article.service.response.ArticleResponse;
+import software.board.articleread.repository.ArticleIdListRepository;
 import software.board.articleread.repository.ArticleQueryModel;
 import software.board.articleread.repository.ArticleQueryModelRepository;
 import software.board.articleread.service.event.handler.EventHandler;
+import software.board.articleread.service.response.ArticleReadPageResponse;
 import software.board.articleread.service.response.ArticleReadResponse;
 import software.board.comment.service.CommentService;
 import software.board.event.Event;
@@ -35,7 +36,7 @@ public class ArticleReadService {
 	private final ArticleQueryModelRepository articleQueryModelRepository;
 
 	private final List<EventHandler> eventHandlers;
-	private final RouterFunctionMapping routerFunctionMapping;
+	private final ArticleIdListRepository articleIdListRepository;
 
 	public void handleEvent(Event<EventPayload> event) {
 		for (EventHandler eventHandler : eventHandlers) {
@@ -74,13 +75,21 @@ public class ArticleReadService {
 		}
 	}
 
+	public ArticleReadPageResponse readAll(Long boardId, Long page, Long pageSize) {
+		return ArticleReadPageResponse.of(
+			readAll(
+				readAllArticleIds(boardId, page, pageSize)
+			),
+			count(boardId)
+		);
+	}
+
 	private List<ArticleReadResponse> readAll(List<Long> articleIds) {
-		//
 		Map<Long, ArticleQueryModel> articleQueryModelMap =
 			articleQueryModelRepository.readAll(articleIds);
 
-		return articleIds.stream().
-			map(articleId -> articleQueryModelMap.containsKey(articleId) ?
+		return articleIds.stream()
+			.map(articleId -> articleQueryModelMap.containsKey(articleId) ?
 				articleQueryModelMap.get(articleId) :
 				fetch(articleId).orElse(null))
 			.filter(Objects::nonNull)
@@ -92,7 +101,43 @@ public class ArticleReadService {
 			.toList();
 	}
 
+	private List<Long> readAllArticleIds(Long boardId, Long page, Long pageSize) {
+		List<Long> articleIds = articleIdListRepository.readAll(boardId, (page - 1) * pageSize,
+			pageSize);
+		if (pageSize == articleIds.size()) {
+			log.info("[ArticleReadService.readAllArticleIds] return redis data.");
+			return articleIds;
+		}
+
+		log.info("[ArticleReadService.readAllArticleIds] return origin data.");
+		return articleService.readAll(boardId, page, pageSize).getArticles().stream()
+			.map(ArticleResponse::getArticleId).toList();
+	}
+
 	private Long count(Long boardId) {
 		return articleService.count(boardId);
+	}
+
+	public List<ArticleReadResponse> readAllInfiniteScroll(Long boardId,
+		Long lastArticleId, Long pageSize) {
+		return readAll(
+			readAllInfiniteScrollArticleIds(boardId, lastArticleId, pageSize)
+		);
+	}
+
+	private List<Long> readAllInfiniteScrollArticleIds(Long boardId, Long lastArticleId,
+		Long pageSize) {
+		List<Long> articleIds = articleIdListRepository
+			.readAllInfiniteScroll(boardId, lastArticleId, pageSize);
+
+		if (articleIds.size() == pageSize) {
+			log.info("[ArticleReadService.readAllInfiniteScrollArticleIds] return redis data.");
+			return articleIds;
+		}
+		log.info("[ArticleReadService.readAllInfiniteScrollArticleIds] return origin data.");
+		return articleService.readAllInfiniteScroll(boardId, lastArticleId, pageSize)
+			.stream()
+			.map(ArticleResponse::getArticleId)
+			.toList();
 	}
 }

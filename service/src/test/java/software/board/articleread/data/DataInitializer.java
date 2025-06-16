@@ -17,6 +17,8 @@ public class DataInitializer {
 		for (int i = 0; i < 30; i++) {
 			Long articleId = createArticleAndReturnArticleId();
 
+			System.out.println("articleId = " + articleId);
+
 			long commentCount = RandomGenerator.getDefault().nextLong(10);
 			long likeCount = RandomGenerator.getDefault().nextLong(100);
 			long viewCount = RandomGenerator.getDefault().nextLong(200);

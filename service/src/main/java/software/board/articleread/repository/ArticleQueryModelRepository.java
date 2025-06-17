@@ -6,6 +6,7 @@ import static java.util.stream.Collectors.toMap;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -50,6 +51,7 @@ public class ArticleQueryModelRepository {
 		List<String> keyList = articleIds.stream().map(this::generateKey).toList();
 
 		return redisTemplate.opsForValue().multiGet(keyList).stream()
+			.filter(Objects::nonNull)
 			.map(json -> DataSerializer.deserialize(json, ArticleQueryModel.class))
 			.collect(toMap(ArticleQueryModel::getArticleId, identity()));
 	}

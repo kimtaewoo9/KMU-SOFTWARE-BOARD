@@ -102,9 +102,10 @@ public class ArticleReadService {
 	}
 
 	private List<Long> readAllArticleIds(Long boardId, Long page, Long pageSize) {
-		List<Long> articleIds = articleIdListRepository.readAll(boardId, (page - 1) * pageSize,
-			pageSize);
-		if (pageSize == articleIds.size()) {
+		List<Long> articleIds = articleIdListRepository
+			.readAll(boardId, (page - 1) * pageSize, pageSize);
+
+		if (articleIds.size() == pageSize) {
 			log.info("[ArticleReadService.readAllArticleIds] return redis data.");
 			return articleIds;
 		}

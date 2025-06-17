@@ -3,7 +3,6 @@ package software.board.articleread.service.event.handler;
 import java.time.Duration;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import software.board.article.repository.BoardArticleCountRepository;
 import software.board.articleread.repository.ArticleIdListRepository;
 import software.board.articleread.repository.ArticleQueryModel;
 import software.board.articleread.repository.ArticleQueryModelRepository;
@@ -16,8 +15,6 @@ import software.board.event.payload.ArticleCreatedEventPayload;
 public class ArticleCreatedEventHandler implements EventHandler<ArticleCreatedEventPayload> {
 
 	private final ArticleQueryModelRepository articleQueryModelRepository;
-
-	private final BoardArticleCountRepository boardArticleCountRepository;
 	private final ArticleIdListRepository articleIdListRepository;
 
 	@Override
@@ -27,6 +24,7 @@ public class ArticleCreatedEventHandler implements EventHandler<ArticleCreatedEv
 			ArticleQueryModel.create(payload),
 			Duration.ofDays(3)
 		);
+		articleIdListRepository.add(payload.getBoardId(), payload.getArticleId(), 1000L);
 	}
 
 	@Override

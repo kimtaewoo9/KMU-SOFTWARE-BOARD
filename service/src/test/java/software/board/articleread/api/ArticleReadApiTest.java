@@ -1,9 +1,13 @@
 package software.board.articleread.api;
 
-import java.time.LocalDateTime;
-import lombok.Data;
+import java.util.List;
 import org.junit.jupiter.api.Test;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.web.client.RestClient;
+import software.board.article.service.response.ArticlePageResponse;
+import software.board.article.service.response.ArticleResponse;
+import software.board.articleread.service.response.ArticleReadPageResponse;
+import software.board.articleread.service.response.ArticleReadResponse;
 
 public class ArticleReadApiTest {
 
@@ -29,19 +33,54 @@ public class ArticleReadApiTest {
 		System.out.println("response2=" + response);
 	}
 
-	@Data
-	static class ArticleReadResponse {
+	@Test
+	void readAllTest() {
+		ArticleReadPageResponse response = restClient.get()
+			.uri("/v1/articles?boardId=%s&page=%s&pageSize=%s".formatted(1L, 1L, 5L))
+			.retrieve()
+			.body(ArticleReadPageResponse.class);
 
-		private Long articleId;
-		private String title;
-		private String content;
-		private Long boardId;
-		private Long writerId;
-		private LocalDateTime createdAt;
-		private LocalDateTime modifiedAt;
-		private Long articleCommentCount;
-		private Long articleLikeCount;
-		private Long articleViewCount;
+		List<ArticleReadResponse> articles = response.getArticles();
+		System.out.println("response.getArticleCount()=" + response.getArticleCount());
+		for (ArticleReadResponse article : articles) {
+			System.out.println("articleId=" + article.getArticleId());
+		}
+
+		ArticlePageResponse response2 = restClient.get()
+			.uri("/v1/articles/source?boardId=%s&page=%s&pageSize=%s".formatted(1L, 1L, 5L))
+			.retrieve()
+			.body(ArticlePageResponse.class);
+
+		System.out.println("response2.getArticleCount()=" + response2.getArticleCount());
+		for (ArticleReadResponse article : articles) {
+			System.out.println("articleId=" + article.getArticleId());
+		}
+	}
+
+	@Test
+	void readAllInfiniteScrollTest() {
+		List<ArticleReadResponse> response = restClient.get()
+			.uri("/v1/articles/infinite-scroll?boardId=%s&pageSize=%s&lastArticleId=%s"
+				.formatted(1L, 5L, 192946982400946176L))
+			.retrieve()
+			.body(new ParameterizedTypeReference<List<ArticleReadResponse>>() {
+			});
+		System.out.println("response.size()=" + response.size());
+		for (ArticleReadResponse articleReadResponse : response) {
+			System.out.println("articleId=" + articleReadResponse.getArticleId());
+		}
+
+		List<ArticleResponse> response2 = restClient.get()
+			.uri("/v1/articles/infinite-scroll/source?boardId=%s&pageSize=%s&lastArticleId=%s"
+				.formatted(1L, 5L, 192946982400946176L))
+			.retrieve()
+			.body(new ParameterizedTypeReference<List<ArticleResponse>>() {
+			});
+		System.out.println("response2.size()=" + response2.size());
+		for (ArticleResponse articleResponse : response2) {
+			System.out.println("articleId=" + articleResponse.getArticleId());
+		}
 
 	}
+
 }

@@ -34,7 +34,7 @@ public class ArticleIdListRepository {
 	public List<Long> readAll(Long boardId, Long offset, Long limit) {
 		return redisTemplate.opsForZSet()
 			.reverseRange(generateKey(boardId), offset, offset + limit - 1)
-			.stream().map(Long::parseLong).toList();
+			.stream().map(Long::valueOf).toList();
 	}
 
 	public List<Long> readAllInfiniteScroll(Long boardId, Long lastArticleId, Long limit) {

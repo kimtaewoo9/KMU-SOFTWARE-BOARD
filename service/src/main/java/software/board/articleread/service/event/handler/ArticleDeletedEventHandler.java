@@ -2,6 +2,7 @@ package software.board.articleread.service.event.handler;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import software.board.articleread.repository.ArticleIdListRepository;
 import software.board.articleread.repository.ArticleQueryModelRepository;
 import software.board.event.Event;
 import software.board.event.EventType;
@@ -12,11 +13,13 @@ import software.board.event.payload.ArticleDeletedEventPayload;
 public class ArticleDeletedEventHandler implements EventHandler<ArticleDeletedEventPayload> {
 
 	private final ArticleQueryModelRepository articleQueryModelRepository;
+	private final ArticleIdListRepository articleIdListRepository;
 
 	@Override
 	public void handle(Event<ArticleDeletedEventPayload> event) {
 		ArticleDeletedEventPayload payload = event.getPayload();
 		articleQueryModelRepository.delete(payload.getArticleId());
+		articleIdListRepository.add(payload.getBoardId(), payload.getArticleId(), 1000L);
 	}
 
 	@Override

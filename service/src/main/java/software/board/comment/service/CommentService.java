@@ -20,6 +20,7 @@ import software.board.common.outboxmessagerelay.OutboxEventPublisher;
 import software.board.common.snowflake.Snowflake;
 import software.board.event.EventType;
 import software.board.event.payload.CommentCreatedEventPayload;
+import software.board.event.payload.CommentUpdatedEventPayload;
 
 @Service
 @RequiredArgsConstructor
@@ -52,7 +53,7 @@ public class CommentService {
 				ArticleCommentCount.init(request.getArticleId(), 1L)
 			);
 		}
-		
+
 		outboxEventPublisher.publish(
 			EventType.COMMENT_CREATED,
 			CommentCreatedEventPayload.builder()
@@ -92,14 +93,13 @@ public class CommentService {
 
 		outboxEventPublisher.publish(
 			EventType.COMMENT_UPDATED,
-			CommentCreatedEventPayload.builder()
+			CommentUpdatedEventPayload.builder()
 				.commentId(savedComment.getCommentId())
 				.content(savedComment.getContent())
 				.articleId(savedComment.getArticleId())
 				.writerId(savedComment.getWriterId())
 				.deleted(savedComment.getDeleted())
 				.createdAt(savedComment.getCreatedAt())
-				.articleCommentCount(count(savedComment.getArticleId()))
 				.build(),
 			savedComment.getArticleId()
 		);

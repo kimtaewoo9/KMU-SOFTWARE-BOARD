@@ -33,7 +33,7 @@ public class ArticleService {
 	private final Snowflake snowflake;
 	private final ArticleRepository articleRepository;
 	private final BoardArticleCountRepository boardArticleCountRepository;
-	
+
 	private final OutboxEventPublisher outboxEventPublisher;
 
 	private final ArticleFileRepository articleFileRepository;
@@ -157,14 +157,14 @@ public class ArticleService {
 		);
 
 		List<ArticleFile> articleFiles = articleFileRepository.findByArticleId(articleId);
-		if (articleFiles != null && !articleFiles.isEmpty()) {
-			for (ArticleFile articleFile : articleFiles) {
-				fileStorageService.delete(articleFile.getFileUrl());
-			}
-			articleFileRepository.deleteAllInBatch(articleFiles);
-		}
+
 		articleRepository.delete(article);
 		boardArticleCountRepository.decrease(article.getBoardId());
+		articleFileRepository.deleteAllInBatch(articleFiles);
+
+		for (ArticleFile articleFile : articleFiles) {
+			fileStorageService.delete(articleFile.getFileUrl());
+		}
 
 		outboxEventPublisher.publish(
 			EventType.ARTICLE_DELETED,

@@ -1,6 +1,7 @@
 package software.board.articleread.repository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import lombok.Getter;
 import software.board.article.service.response.ArticleResponse;
 import software.board.event.payload.ArticleCreatedEventPayload;
@@ -24,6 +25,8 @@ public class ArticleQueryModel {
 	private Long articleCommentCount;
 	private Long articleLikeCount;
 
+	private List<String> fileUrls;
+
 	// 이벤트 기반으로 query model 생성
 	public static ArticleQueryModel create(ArticleCreatedEventPayload payload) {
 		ArticleQueryModel articleQueryModel = new ArticleQueryModel();
@@ -38,6 +41,7 @@ public class ArticleQueryModel {
 
 		articleQueryModel.articleCommentCount = 0L;
 		articleQueryModel.articleLikeCount = 0L;
+		articleQueryModel.fileUrls = payload.getFileUrls();
 		return articleQueryModel;
 	}
 
@@ -55,6 +59,8 @@ public class ArticleQueryModel {
 
 		articleQueryModel.articleCommentCount = commentCount;
 		articleQueryModel.articleLikeCount = likeCount;
+
+		articleQueryModel.fileUrls = articleResponse.getFileUrls();
 		return articleQueryModel;
 	}
 
@@ -82,5 +88,6 @@ public class ArticleQueryModel {
 		this.writerId = payload.getWriterId();
 		this.createdAt = payload.getCreatedAt();
 		this.updatedAt = payload.getUpdatedAt();
+		this.fileUrls = payload.getFileUrls();
 	}
 }

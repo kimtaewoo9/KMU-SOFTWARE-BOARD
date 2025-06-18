@@ -19,7 +19,7 @@ public class ArticleDeletedEventHandler implements EventHandler<ArticleDeletedEv
 	public void handle(Event<ArticleDeletedEventPayload> event) {
 		ArticleDeletedEventPayload payload = event.getPayload();
 		articleQueryModelRepository.delete(payload.getArticleId());
-		articleIdListRepository.add(payload.getBoardId(), payload.getArticleId(), 1000L);
+		articleIdListRepository.delete(payload.getBoardId(), payload.getArticleId());
 	}
 
 	@Override

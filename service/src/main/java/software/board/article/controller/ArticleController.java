@@ -1,8 +1,10 @@
 package software.board.article.controller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,6 +23,7 @@ import software.board.article.service.response.ArticleResponse;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
+@Tag(name = "게시글 관리 API")
 public class ArticleController {
 
 	private final ArticleService articleService;
@@ -55,10 +58,10 @@ public class ArticleController {
 		return articleService.readAllInfiniteScroll(boardId, pageSize, lastArticleId);
 	}
 
-	@PostMapping("/v1/articles")
+	@PostMapping(value = "/v1/articles", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ArticleResponse create(
-		@RequestPart ArticleCreateRequest request,
-		@RequestPart(required = false) List<MultipartFile> files) {
+		@RequestPart("request") ArticleCreateRequest request,
+		@RequestPart(value = "files", required = false) List<MultipartFile> files) {
 		return articleService.create(request, files);
 	}
 

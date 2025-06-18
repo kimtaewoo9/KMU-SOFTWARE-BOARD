@@ -85,6 +85,7 @@ public class ArticleService {
 				.writerId(article.getWriterId())
 				.createdAt(article.getCreatedAt())
 				.updatedAt(article.getUpdatedAt())
+				.fileUrls(fileUrls)
 				.build(),
 			article.getBoardId()
 		);
@@ -141,6 +142,7 @@ public class ArticleService {
 				.writerId(article.getWriterId())
 				.createdAt(article.getCreatedAt())
 				.updatedAt(article.getUpdatedAt())
+				.fileUrls(fileUrls)
 				.build(),
 			article.getBoardId()
 		);
@@ -162,6 +164,10 @@ public class ArticleService {
 		boardArticleCountRepository.decrease(article.getBoardId());
 		articleFileRepository.deleteAllInBatch(articleFiles);
 
+		List<String> fileUrls = articleFiles.stream()
+			.map(ArticleFile::getFileUrl)
+			.toList();
+
 		for (ArticleFile articleFile : articleFiles) {
 			fileStorageService.delete(articleFile.getFileUrl());
 		}
@@ -176,6 +182,7 @@ public class ArticleService {
 				.writerId(article.getWriterId())
 				.createdAt(article.getCreatedAt())
 				.updatedAt(article.getUpdatedAt())
+				.fileUrls(fileUrls)
 				.build(),
 			article.getBoardId()
 		);
@@ -186,7 +193,14 @@ public class ArticleService {
 		Article article = articleRepository.findById(articleId).orElseThrow(
 			() -> new EntityNotFoundException("[ArticleService.read] article not found")
 		);
-		return ArticleResponse.from(article);
+
+		List<ArticleFile> articleFiles = articleFileRepository.findByArticleId(articleId);
+
+		List<String> fileUrls = articleFiles.stream()
+			.map(ArticleFile::getFileUrl)
+			.toList();
+
+		return ArticleResponse.from(article, fileUrls);
 	}
 
 	@Transactional(readOnly = true)

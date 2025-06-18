@@ -47,7 +47,7 @@ public class ArticleReadService {
 	}
 
 	public ArticleReadResponse read(Long articleId) {
-		// articleQueryModel 에서 찾아보고 없으면 fetch
+		log.info("[ArticleReadService.read] articleId={}", articleId);
 		ArticleQueryModel articleQueryModel = articleQueryModelRepository.read(articleId)
 			.or(() -> fetch(articleId))
 			.orElseThrow();

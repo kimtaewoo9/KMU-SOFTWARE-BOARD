@@ -1,6 +1,7 @@
 package software.board.event.payload;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,4 +22,6 @@ public class ArticleDeletedEventPayload extends EventPayload {
 	private LocalDateTime createdAt;
 	private LocalDateTime updatedAt;
 	private Long boardArticleCount;
+
+	private List<String> fileUrls;
 }

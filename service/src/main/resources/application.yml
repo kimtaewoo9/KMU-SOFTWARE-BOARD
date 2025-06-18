@@ -30,8 +30,8 @@ spring:
 cloud:
   aws:
     credentials:
-      access-key: AKIA3LUYWHNQK2UV4CV3 # ${ACCESS_KEY}
-      secret-key: AKIA3LUYWHNQK2UV4CV3 # ${SECRET_KEY}
+      access-key: ${ACCESS_KEY}
+      secret-key: ${SECRET_KEY}
     region:
       static: ap-northeast-2
     s3:

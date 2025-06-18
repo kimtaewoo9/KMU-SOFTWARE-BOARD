@@ -1,6 +1,7 @@
 package software.board.event.payload;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,4 +21,6 @@ public class ArticleUpdatedEventPayload extends EventPayload {
 	private Long writerId;
 	private LocalDateTime createdAt;
 	private LocalDateTime updatedAt;
+
+	private List<String> fileUrls;
 }

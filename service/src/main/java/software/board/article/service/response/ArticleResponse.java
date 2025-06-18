@@ -1,5 +1,7 @@
 package software.board.article.service.response;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -11,10 +13,13 @@ import software.board.article.entity.Article;
 @ToString
 public class ArticleResponse {
 
+	@JsonSerialize(using = ToStringSerializer.class)
 	private Long articleId;
 	private String title;
 	private String content;
+	@JsonSerialize(using = ToStringSerializer.class)
 	private Long boardId;
+	@JsonSerialize(using = ToStringSerializer.class)
 	private Long writerId;
 	private LocalDateTime createdAt;
 	private LocalDateTime updatedAt;

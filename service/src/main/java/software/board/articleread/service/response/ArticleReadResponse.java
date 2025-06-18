@@ -1,6 +1,9 @@
 package software.board.articleread.service.response;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import java.time.LocalDateTime;
+import java.util.List;
 import lombok.Getter;
 import lombok.ToString;
 import software.board.articleread.repository.ArticleQueryModel;
@@ -9,10 +12,13 @@ import software.board.articleread.repository.ArticleQueryModel;
 @ToString
 public class ArticleReadResponse {
 
+	@JsonSerialize(using = ToStringSerializer.class)
 	private Long articleId;
 	private String title;
 	private String content;
+	@JsonSerialize(using = ToStringSerializer.class)
 	private Long boardId;
+	@JsonSerialize(using = ToStringSerializer.class)
 	private Long writerId;
 	private LocalDateTime createdAt;
 	private LocalDateTime updatedAt;
@@ -20,6 +26,8 @@ public class ArticleReadResponse {
 	private Long articleCommentCount;
 	private Long articleLikeCount;
 	private Long articleViewCount;
+
+	private List<String> fileUrls;
 
 	public static ArticleReadResponse from(ArticleQueryModel articleQueryModel, Long viewCount) {
 		ArticleReadResponse response = new ArticleReadResponse();
@@ -35,6 +43,7 @@ public class ArticleReadResponse {
 		response.articleLikeCount = articleQueryModel.getArticleLikeCount();
 		response.articleViewCount = viewCount;
 
+		response.fileUrls = articleQueryModel.getFileUrls();
 		return response;
 	}
 }

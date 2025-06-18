@@ -1,5 +1,6 @@
 package software.board.like.controller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,6 +12,7 @@ import software.board.like.service.response.ArticleLikeResponse;
 
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "좋아요 관리 API")
 public class ArticleLikeController {
 
 	private final ArticleLikeService articleLikeService;

@@ -10,7 +10,7 @@ import software.board.view.service.ArticleViewService;
 
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "조회수 관리 API")
+@Tag(name = "조회수 관리", description = "조회수 관련 API")
 public class ArticleViewController {
 
 	private final ArticleViewService articleViewService;

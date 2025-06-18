@@ -19,7 +19,7 @@ import software.board.comment.service.response.CommentResponse;
 
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "댓글 관리 API")
+@Tag(name = "댓글 관리", description = "댓글 관련 API")
 public class CommentController {
 
 	private final CommentService commentService;

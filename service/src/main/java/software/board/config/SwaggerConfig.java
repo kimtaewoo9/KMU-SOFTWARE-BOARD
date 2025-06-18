@@ -14,8 +14,8 @@ public class SwaggerConfig {
 	@Bean
 	public OpenAPI openAPI() {
 		Info info = new Info()
-			.title("SOFTWARE-BOARD") // API 문서 제목
-			.version("v1.0.0") // API 버전
+			.title("SOFTWARE-BOARD API 명세")
+			.version("v1.0.1") // API 버전
 			.description("SOFTWARE-BOARD API 명세서입니다."); // API에 대한 상세 설명
 
 		// JWT 인증 방식 설정을 위한 SecurityScheme 정의

@@ -13,7 +13,7 @@ import software.board.articleread.service.response.ArticleReadResponse;
 
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "게시글 조회 관리 API")
+@Tag(name = "게시글 조회 관리", description = "게시글 조회 관련 API")
 public class ArticleReadController {
 
 	private final ArticleReadService articleReadService;

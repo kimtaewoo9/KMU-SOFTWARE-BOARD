@@ -1,6 +1,5 @@
 package software.board.articleread.controller;
 
-import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,8 +12,7 @@ import software.board.articleread.service.response.ArticleReadResponse;
 
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "게시글 조회 관리", description = "게시글 조회 관련 API")
-public class ArticleReadController {
+public class ArticleReadController implements ArticleReadApi {
 
 	private final ArticleReadService articleReadService;
 

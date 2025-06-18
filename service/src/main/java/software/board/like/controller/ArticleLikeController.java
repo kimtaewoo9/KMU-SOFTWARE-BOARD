@@ -1,6 +1,5 @@
 package software.board.like.controller;
 
-import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,8 +11,7 @@ import software.board.like.service.response.ArticleLikeResponse;
 
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "좋아요 관리", description = "좋아요 관련 API")
-public class ArticleLikeController {
+public class ArticleLikeController implements ArticleLikeApi {
 
 	private final ArticleLikeService articleLikeService;
 
@@ -56,7 +54,7 @@ public class ArticleLikeController {
 		articleLikeService.likePessimisticLock1(articleId, userId);
 	}
 
-	@DeleteMapping("/v1/article-likes/aritlces/{articleId}/users/{userId}/pessimistic-lock-1")
+	@DeleteMapping("/v1/article-likes/articles/{articleId}/users/{userId}/pessimistic-lock-1")
 	public void unlikePessimisticLock1(
 		@PathVariable("articleId") Long articleId,
 		@PathVariable("userId") Long userId

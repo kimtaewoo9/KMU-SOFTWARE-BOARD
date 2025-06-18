@@ -1,6 +1,5 @@
 package software.board.comment.controller;
 
-import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,8 +18,7 @@ import software.board.comment.service.response.CommentResponse;
 
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "댓글 관리", description = "댓글 관련 API")
-public class CommentController {
+public class CommentController implements CommentApi {
 
 	private final CommentService commentService;
 

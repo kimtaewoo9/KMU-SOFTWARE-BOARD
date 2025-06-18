@@ -1,6 +1,5 @@
 package software.board.article.controller;
 
-import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,8 +22,7 @@ import software.board.article.service.response.ArticleResponse;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-@Tag(name = "게시글 관리", description = "게시글 관련 API")
-public class ArticleController {
+public class ArticleController implements ArticleApi {
 
 	private final ArticleService articleService;
 

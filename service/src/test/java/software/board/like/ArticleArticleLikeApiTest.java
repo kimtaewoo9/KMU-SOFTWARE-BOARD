@@ -9,7 +9,7 @@ import lombok.ToString;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.client.RestClient;
 
-public class ArticleLikeApiTest {
+public class ArticleArticleLikeApiTest {
 
 	RestClient restClient = RestClient.create("http://localhost:8080");
 

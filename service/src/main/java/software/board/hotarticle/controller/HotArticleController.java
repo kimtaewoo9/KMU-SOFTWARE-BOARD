@@ -11,7 +11,7 @@ import software.board.hotarticle.service.response.HotArticleResponse;
 
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "인기 게시글 관리 API")
+@Tag(name = "인기 게시글 관리", description = "인기 게시글 관련 API")
 public class HotArticleController {
 
 	private final HotArticleService hotArticleService;

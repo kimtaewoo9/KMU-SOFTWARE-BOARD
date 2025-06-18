@@ -23,7 +23,7 @@ import software.board.article.service.response.ArticleResponse;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-@Tag(name = "게시글 관리 API")
+@Tag(name = "게시글 관리", description = "게시글 관련 API")
 public class ArticleController {
 
 	private final ArticleService articleService;

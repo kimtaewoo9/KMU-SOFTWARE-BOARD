@@ -12,7 +12,7 @@ import software.board.like.service.response.ArticleLikeResponse;
 
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "좋아요 관리 API")
+@Tag(name = "좋아요 관리", description = "좋아요 관련 API")
 public class ArticleLikeController {
 
 	private final ArticleLikeService articleLikeService;

@@ -29,14 +29,15 @@ public class HotArticleService {
 			return;
 		}
 
-		if (!isCommentCountCreatedOrDeleted(event)) {
+		if (!isArticleLikedCreatedOrDeleted(event)) {
 			eventHandler.handle(event);
 		} else {
+			// 좋아요에 대한 이벤트라면 score 를 update 함
 			hotArticleScoreUpdater.update(event, eventHandler);
 		}
 	}
 
-	private boolean isCommentCountCreatedOrDeleted(Event<EventPayload> event) {
+	private boolean isArticleLikedCreatedOrDeleted(Event<EventPayload> event) {
 		return event.getType() == EventType.ARTICLE_LIKED ||
 			event.getType() == EventType.ARTICLE_UNLIKED;
 	}
